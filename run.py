@@ -23,7 +23,7 @@ async def 실행(ctx):
         await ctx.author.create_dm()
     while doLoop:
         await check(ctx)
-        await asyncio.sleep(5)
+        await asyncio.sleep(30)
 
 @app.command()
 async def 종료(ctx):
