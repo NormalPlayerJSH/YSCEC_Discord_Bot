@@ -14,12 +14,14 @@ async def check(ctx):
         infoDict=pickle.load(f)
     await dm_channel.send(f"Hello, {infoDict[id]['ID']}")
     initNlogin()
-    #await asyncio.sleep(1)
+    await asyncio.sleep(1)
     bs=BeautifulSoup(driver.page_source,features='html.parser')
     #courses=driver.find_element_by_id('frontpage-course-list').find_elements_by_class_name('coursebox')
     try:
         courses=bs.select_one('#frontpage-course-list').select('.coursebox')
     except:
+        await asyncio.sleep(2)
+        time.sleep(2)
         bs=BeautifulSoup(driver.page_source,features='html.parser')
         courses=bs.select_one('#frontpage-course-list').select('.coursebox')
     for i in courses:
