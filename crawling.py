@@ -4,6 +4,11 @@ import asyncio, datetime, sys, os, time
 import pickle
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+
 
 async def check(ctx):
     global infoDict, id, dm_channel
@@ -14,14 +19,12 @@ async def check(ctx):
         infoDict=pickle.load(f)
     await dm_channel.send(f"Hello, {infoDict[id]['ID']}")
     initNlogin()
-    await asyncio.sleep(1)
+    WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".coursebox")))
     bs=BeautifulSoup(driver.page_source,features='html.parser')
     #courses=driver.find_element_by_id('frontpage-course-list').find_elements_by_class_name('coursebox')
     try:
         courses=bs.select_one('#frontpage-course-list').select('.coursebox')
     except:
-        await asyncio.sleep(2)
-        time.sleep(2)
         bs=BeautifulSoup(driver.page_source,features='html.parser')
         courses=bs.select_one('#frontpage-course-list').select('.coursebox')
     for i in courses:
