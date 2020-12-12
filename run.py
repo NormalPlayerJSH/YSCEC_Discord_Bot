@@ -31,6 +31,6 @@ async def 종료(ctx):
     doLoop=False
     print('Terminating')
 
-with open('token.txt','r') as f:
+with open('secretData/token.txt', 'r') as f:
     token=f.readline()
 app.run(token)
