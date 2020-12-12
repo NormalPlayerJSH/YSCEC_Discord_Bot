@@ -37,6 +37,7 @@ async def check(ctx):
         courseNum=i.select_one('.subject_id').get_text()
         await dm_channel.send(f"\n{courseNum}\n{courseName} - {prof} 교수님\n{link}")
         await asyncio.sleep(3)
+    driver.close()
 
 def initNlogin():
     global driver

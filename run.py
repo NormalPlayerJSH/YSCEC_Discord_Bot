@@ -11,24 +11,24 @@ async def on_ready():
     print('Connection Success')
     await app.change_presence(status=discord.Status.online,activity=None)
 
-doLoop=False
+loopNum=0
 
 @app.command()
 async def 실행(ctx):
     print('started')
     print('Run by',ctx.author.id)
-    global doLoop
-    doLoop=True
+    global loopNum
+    nowNum=loopNum
     if ctx.author.dm_channel is None:
         await ctx.author.create_dm()
-    while doLoop:
+    while nowNum==loopNum:
         await check(ctx)
         await asyncio.sleep(30)
 
 @app.command()
 async def 종료(ctx):
-    global doLoop
-    doLoop=False
+    global loopNum
+    loopNum+=1
     print('Terminating')
 
 with open('secretData/token.txt', 'r') as f:
