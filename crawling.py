@@ -14,10 +14,14 @@ async def check(ctx):
         infoDict=pickle.load(f)
     await dm_channel.send(f"Hello, {infoDict[id]['ID']}")
     initNlogin()
-    await asyncio.sleep(1)
+    #await asyncio.sleep(1)
     bs=BeautifulSoup(driver.page_source,features='html.parser')
     #courses=driver.find_element_by_id('frontpage-course-list').find_elements_by_class_name('coursebox')
-    courses=bs.select_one('#frontpage-course-list').select('.coursebox')
+    try:
+        courses=bs.select_one('#frontpage-course-list').select('.coursebox')
+    except:
+        bs=BeautifulSoup(driver.page_source,features='html.parser')
+        courses=bs.select_one('#frontpage-course-list').select('.coursebox')
     for i in courses:
         #aTag=i.find_element_by_class_name('coursename').find_element_by_tag_name('a')
         aTag=i.select_one('.coursename').a
@@ -37,7 +41,7 @@ def initNlogin():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 11_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36')
     driver=webdriver.Chrome('../chromedriver',options=options)
-    driver.implicitly_wait(1)
+    driver.implicitly_wait(10)
     driver.get('https://yscec.yonsei.ac.kr/')
     idInput=driver.find_element_by_id('username')
     idInput.click()
@@ -45,8 +49,6 @@ def initNlogin():
     pwInput=driver.find_element_by_id('password')
     pwInput.click()
     pwInput.send_keys(infoDict[id]['PW'])
-    driver.implicitly_wait(1)
     loginBtn=driver.find_element_by_id('loginbtn')
     loginBtn.click()
-    driver.implicitly_wait(3)
     #driver.get('https://yscec.yonsei.ac.kr/')
