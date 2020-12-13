@@ -35,7 +35,12 @@ async def check(ctx):
         #prof=i.find_element_by_class_name('teacher').text
         prof=i.select_one('.teacher').get_text()
         courseNum=i.select_one('.subject_id').get_text()
-        await dm_channel.send(f"\n{courseNum}\n{courseName} - {prof} 교수님\n{link}")
+        newEmbed=discord.Embed(title=f'{courseName} - 대충 공지 제목',url=link,description='대충 공지 내용ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㄴㅁ\nㅁㄴㅇㄹㄴㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ',color=0xfffb00)
+        newEmbed.set_author(name=f'{courseName}({courseNum}) - {prof} 교수님')
+        #newEmbed.add_field(name=f'>{courseName}',value=f'[이동하기]({link})',inline=True)
+        #newEmbed.add_field(name='',value=f'[이동하기]({link})',inline=False)
+        await dm_channel.send(embed=newEmbed)
+        #await dm_channel.send(f"\n{courseNum}\n{courseName} - {prof} 교수님\n{link}")
         await asyncio.sleep(3)
     driver.close()
 
