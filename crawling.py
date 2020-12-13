@@ -28,6 +28,7 @@ async def check(ctx):
         bs=BeautifulSoup(driver.page_source,features='html.parser')
         courses=bs.select_one('#frontpage-course-list').select('.coursebox')
     for i in courses:
+        # 와이섹 메인화면에서 시작
         #aTag=i.find_element_by_class_name('coursename').find_element_by_tag_name('a')
         aTag=i.select_one('.coursename').a
         link=aTag['href']
@@ -35,8 +36,34 @@ async def check(ctx):
         #prof=i.find_element_by_class_name('teacher').text
         prof=i.select_one('.teacher').get_text()
         courseNum=i.select_one('.subject_id').get_text()
-        newEmbed=discord.Embed(title=f'{courseName} - 대충 공지 제목',url=link,description='대충 공지 내용ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㄴㅁ\nㅁㄴㅇㄹㄴㅁㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹ',color=0xfffb00)
-        newEmbed.set_author(name=f'{courseName}({courseNum}) - {prof} 교수님')
+        
+        # 각 강의 메인화면 크롤링
+        driver.get(link)
+        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".activity")))
+        bs=BeautifulSoup(driver.page_source,features='html.parser')
+        link=bs.select_one('#section-0').select('.activity')[0].select_one('a')['href']
+
+        # 각 강의 내 공지사항 게시판 크롤링
+        driver.get(link)
+        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".thread-content")))
+        bs=BeautifulSoup(driver.page_source,features='html.parser')
+        contentId=bs.select('.thread-post-title')[0].select_one('a')['onclick'].split("'")[1]
+        b=bs.select_one('form.a_link_param').select_one('[name="b"]')['value']
+        boardform=bs.select_one('form.a_link_param').select_one('[name="boardform"]')['value']
+        link=f'https://yscec.yonsei.ac.kr/mod/jinotechboard/content.php?contentId={contentId}&b={b}&boardform={boardform}'
+
+        # 각 강의 공지사항 중 첫번째 게시물 크롤링
+        driver.get(link)
+        WebDriverWait(driver, 100).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".detail-contents")))
+        bs=BeautifulSoup(driver.page_source,features='html.parser')
+        title=bs.select_one('.detail-title').get_text()
+        contents=bs.select_one('.detail-contents').get_text()
+        dates=bs.select_one('.detail-date').get_text().split('에')[0][:-1]
+
+        #긁어온 공지사항 전송
+        newEmbed=discord.Embed(title=f'{courseName} - {title}',url=link,description=f'{contents}',color=0xfffb00)
+        newEmbed.set_author(name=f'{dates}')
+        newEmbed.set_footer(text=f'{courseName}({courseNum}) - {prof} 교수님')
         #newEmbed.add_field(name=f'>{courseName}',value=f'[이동하기]({link})',inline=True)
         #newEmbed.add_field(name='',value=f'[이동하기]({link})',inline=False)
         await dm_channel.send(embed=newEmbed)
